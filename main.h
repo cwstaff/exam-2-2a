@@ -22,6 +22,7 @@ static long long int num_steps = 1000000000;
 double step;
 
 // add synchronization primitive(s) here
+mutex mtx;
 
 // Do not modify this function
 inline void single_sum_thread(int id, int num_threads, double sum[NUM_THREADS][PAD])
@@ -38,6 +39,15 @@ inline void single_sum_thread(int id, int num_threads, double sum[NUM_THREADS][P
 // TODO
 inline void pi_sum_thread(/* add necessary arguments here */)
 {
-    // add code here
+    double pi = 0.0;
+    for (long long int i = id; i < num_steps; i = i + num_threads)
+    {
+        pi += sum[i % NUM_THREADS][0] * step;
+    }
+
+    // Lock the mutex before updating pi_values
+    lock_guard<mutex> lock(mtx);
+    pi_values[id] = pi;
+    
     sleep(1); // DO NOT REMOVE THIS
 }
